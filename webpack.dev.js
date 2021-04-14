@@ -2,9 +2,10 @@ const	webpack			= require( 'webpack' ),
 		path			= require( 'path' ),
 		fs				= require( 'fs' ),
 		{ execSync }	= require( 'child_process' ),
-		websiteName		= 'dev.example.de',
+		websiteName		= 'dev.veganemangelernaehrung.de',
+		websiteNameUm	= 'dev.veganemangelernährung.de',
 		websitePath		= `/var/www/html/${ websiteName }/`,
-		publicPath		= `https://${ websiteName }/`;
+		publicPath		= `https://${ websiteNameUm }/`;
 
 console.log( `\nRemoving old javascript and mapping files in ${ websitePath }...` );
 fs.readdirSync( websitePath ).forEach( file  => {
@@ -16,7 +17,7 @@ fs.readdirSync( websitePath ).forEach( file  => {
 console.log( 'Done.\n' );
 
 console.log( '\nCompiling BarFoos 2.0 Framework...\n' );
-execSync( 'buildbf --target /home/zer0cool/projects/example_website --development' );
+execSync( 'buildbf --target /home/zer0cool/projects/veganemangelernaehrung_website --development' );
 console.log( 'Done.\n' );
 
 module.exports = {

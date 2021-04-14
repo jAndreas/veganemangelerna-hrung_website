@@ -1,7 +1,7 @@
 'use strict';
 
 import urlPolyfill from 'url-search-params';
-import 'babel-polyfill';
+import '@babel/polyfill';
 import 'proxy-polyfill/proxy.min.js';
 import 'whatwg-fetch';
 
@@ -20,12 +20,12 @@ if(!('URLSearchParams' in win) ) {
 const	Browser		= new BrowserKit(),
 		bgImagePath	= ENV_PUBLIC_PATH + 'images/background.jpg';
 
-class ExampleWebsite extends Composition( Mediator, LogTools, ServerConnection ) {
+class VeganeMangelErnaehrung extends Composition( Mediator, LogTools, ServerConnection ) {
 	constructor() {
 		super( ...arguments );
 
 		Object.assign(this, {
-			id:						'App'
+			id:	'App'
 		});
 
 		this.init();
@@ -42,17 +42,17 @@ class ExampleWebsite extends Composition( Mediator, LogTools, ServerConnection )
 
 		this.recv( 'reloadPage', this.onRemotePageReload.bind( this ) );
 
-		this.backgroundImage	= Browser.loadImage( bgImagePath );
+		//this.backgroundImage	= Browser.loadImage( bgImagePath );
 
 		if( this.backgroundImage ) {
 			this.backgroundImage.then( objURL => {
 				this.fire( 'configApp.core', {
-					name:				'Example - Website',
-					title:				'Example Title',
+					name:				'Die vegane Mangelernährung - Website',
+					title:				'Die vegane Mangelernährung - Andreas Göbel',
 					version:			'0.1.0',
 					status:				'alpha',
 					background:			{
-						objURL:		objURL,
+						//objURL:		objURL,
 						css:	{
 						}
 					}
@@ -65,6 +65,32 @@ class ExampleWebsite extends Composition( Mediator, LogTools, ServerConnection )
 		if(!this.cookiesAccepted ) {
 			let cookieConfirmSection = await import( /* webpackChunkName: "cookieConfirmSection" */ 'cookieConfirmSection/js/main.js' );
 			cookieConfirmSection.start();
+		}
+
+		let testBuy = await import( /* webpackChunkName: "testBuy" */ 'testBuy/js/main.js' );
+		testBuy.start();
+
+		await this.routeByHash( await this.fire( 'getHash.appEvents' ) );
+		await this.routeByParams( await this.fire( 'getParams.appEvents' ) );
+	}
+
+	async routeByHash( hash ) {
+
+	}
+
+	async routeByParams( params ) {
+		if( params.has( 'paymentId' ) ) {
+			await this.fire( 'waitForConnection.server' );
+
+			this.send({
+				type:		'ppexecute',
+				payload:	{
+					paymentId:	params.get( 'paymentId' ),
+					PayerID:	params.get( 'PayerID' )
+				}
+			},{
+				noTimeout: true
+			});
 		}
 	}
 
@@ -90,4 +116,4 @@ class ExampleWebsite extends Composition( Mediator, LogTools, ServerConnection )
 	}
 }
 
-new ExampleWebsite();
+new VeganeMangelErnaehrung();
